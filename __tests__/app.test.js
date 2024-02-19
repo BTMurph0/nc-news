@@ -3,6 +3,7 @@ const request = require("supertest");
 const db = require("../db/connection");
 const seed = require("../db/seeds/seed");
 const testData = require("../db/data/test-data");
+const endpointsFile = require('../endpoints.json')
 
 beforeEach(() => seed(testData));
 afterAll(() => db.end());
@@ -28,8 +29,18 @@ describe("GET /api/topics", () => {
       .get("/api/topic")
       .expect(404)
       .then((response) => {
-        console.log(response.error.text)
         expect(response.error.text).toBe("Sorry can't find that!");
       });
   });
 });
+describe('GET /api', () => {
+  test('GET:200 sends an object containing description of the endpoints', () => {
+    return request(app)
+    .get("/api")
+    .expect(200)
+    .then((response) => {
+      const endPoints = response.body.parsedEndpoints;
+        expect(endPoints).toEqual(endpointsFile)
+      });
+    });
+})

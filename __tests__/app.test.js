@@ -78,3 +78,49 @@ describe("GET /api/articles/:article_id", () => {
       });
   });
 });
+describe.only('GET /api/articles', () => {
+  test('GET:200 sends an array of articles to the client', () => {
+    return request(app)
+    .get("/api/articles")
+    .expect(200)
+    .then((response) => {
+      const articles = response.body.articles;
+      expect(articles).toHaveLength(13);
+      articles.forEach((article) => {
+        expect(article).toMatchObject({
+          author: expect.any(String),
+          title: expect.any(String),
+          article_id: expect.any(Number),
+          topic: expect.any(String),
+          created_at: expect.any(String),
+          votes: expect.any(Number),
+          article_img_url: expect.any(String),
+          comment_count: expect.any(String),
+        });
+      });
+    });
+  })
+  test('GET:200 sends an array of articles to the client sorted by date in descending order', () => {
+    return request(app)
+    .get("/api/articles")
+    .expect(200)
+    .then((response) => {
+      const articles = response.body.articles;
+      console.log(articles)
+      expect(articles).toHaveLength(13);
+      expect(articles).toBeSortedBy("created_at", { descending: true });
+    });
+  })
+  test('GET:200 sends an array of articles to the client which do not include the articles body column', () => {
+    return request(app)
+    .get("/api/articles")
+    .expect(200)
+    .then((response) => {
+      const articles = response.body.articles;
+      console.log(articles)
+      articles.forEach((article) => {
+        expect(article).not.toHaveProperty('body');
+      })     
+    });
+  })
+})

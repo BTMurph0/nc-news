@@ -1,13 +1,9 @@
 const fs = require("fs/promises");
 
 exports.getEndpoints = (request, response, next) => {
-  return fs
-    .readFile(`./endpoints.json`)
+  fs.readFile(`./endpoints.json`, 'utf8')
     .then((endPoints) => {
-      const parsedEndpoints = JSON.parse(endPoints);
-      return parsedEndpoints;
-    }).then((parsedEndpoints) => {
-      response.status(200).send({ parsedEndpoints });
+      response.status(200).send(JSON.parse(endPoints));
     })
     .catch(next);
 };

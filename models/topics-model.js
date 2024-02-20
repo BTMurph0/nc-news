@@ -1,16 +1,12 @@
 const db = require("../db/connection");
 
 exports.selectTopics = () => {
-  const sqlString = `
-    SELECT * FROM topics
-    `;
-
-  return db.query(sqlString).then((result) => {
-    if (!result.rows[0]) {
+  return db.query(`SELECT * FROM topics`).then((result) => {
+    if (!result) {
       return Promise.reject({
         status: 404,
-        msg: "Not Found"
-      })
+        msg: "Sorry can't find that!",
+      });
     }
     return result.rows;
   });

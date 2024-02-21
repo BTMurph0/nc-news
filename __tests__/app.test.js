@@ -158,7 +158,7 @@ describe("GET /api/articles/:article_id/comments", () => {
       .get("/api/articles/34324/comments")
       .expect(404)
       .then((response) => {
-        expect(response.body.msg).toBe("entry does not exist");
+        expect(response.body.msg).toBe("34324 does not exist in articles");
       });
   });
   test("GET:400 responds with an appropriate error message when given an invalid id", () => {
@@ -220,7 +220,7 @@ describe("POST /api/articles/:article_id/comments", () => {
       .expect(404)
       .then((response) => {
         const msg = response.body.msg;
-        expect(msg).toBe("entry does not exist");
+        expect(msg).toBe("3432432 does not exist in articles");
       });
   });
 });

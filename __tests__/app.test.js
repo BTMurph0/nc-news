@@ -4,6 +4,7 @@ const db = require("../db/connection");
 const seed = require("../db/seeds/seed");
 const testData = require("../db/data/test-data");
 const endpointsFile = require("../endpoints.json");
+const { checkExists } = require("../utils");
 
 beforeEach(() => seed(testData));
 afterAll(() => db.end());
@@ -61,66 +62,119 @@ describe("GET /api/articles/:article_id", () => {
         );
       });
   });
-  test('GET:404 sends an appropriate status and error message when given a valid but non-existent id', () => {
+  test("GET:404 sends an appropriate status and error message when given a valid but non-existent id", () => {
     return request(app)
-      .get('/api/articles/999')
+      .get("/api/articles/999")
       .expect(404)
       .then((response) => {
-        expect(response.body.msg).toBe('article does not exist');
+        expect(response.body.msg).toBe("article does not exist");
       });
   });
-  test('GET:400 sends an appropriate status and error message when given an invalid id', () => {
+  test("GET:400 sends an appropriate status and error message when given an invalid id", () => {
     return request(app)
-      .get('/api/articles/not-an-article')
+      .get("/api/articles/not-an-article")
       .expect(400)
       .then((response) => {
-        expect(response.body.msg).toBe('Bad Request');
+        expect(response.body.msg).toBe("Bad Request");
       });
   });
 });
-describe.only('GET /api/articles', () => {
-  test('GET:200 sends an array of articles to the client', () => {
+describe("GET /api/articles", () => {
+  test("GET:200 sends an array of articles to the client", () => {
     return request(app)
-    .get("/api/articles")
-    .expect(200)
-    .then((response) => {
-      const articles = response.body.articles;
-      expect(articles).toHaveLength(13);
-      articles.forEach((article) => {
-        expect(article).toMatchObject({
-          author: expect.any(String),
-          title: expect.any(String),
-          article_id: expect.any(Number),
-          topic: expect.any(String),
-          created_at: expect.any(String),
-          votes: expect.any(Number),
-          article_img_url: expect.any(String),
-          comment_count: expect.any(String),
+      .get("/api/articles")
+      .expect(200)
+      .then((response) => {
+        const articles = response.body.articles;
+        expect(articles).toHaveLength(13);
+        articles.forEach((article) => {
+          expect(article).toMatchObject({
+            author: expect.any(String),
+            title: expect.any(String),
+            article_id: expect.any(Number),
+            topic: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            article_img_url: expect.any(String),
+            comment_count: expect.any(String),
+          });
         });
       });
-    });
-  })
-  test('GET:200 sends an array of articles to the client sorted by date in descending order', () => {
+  });
+  test("GET:200 sends an array of articles to the client sorted by date in descending order", () => {
     return request(app)
-    .get("/api/articles")
-    .expect(200)
-    .then((response) => {
-      const articles = response.body.articles;
-      console.log(articles)
-      expect(articles).toHaveLength(13);
-      expect(articles).toBeSortedBy("created_at", { descending: true });
-    });
-  })
-  test('GET:200 sends an array of articles to the client which do not include the articles body column', () => {
+      .get("/api/articles")
+      .expect(200)
+      .then((response) => {
+        const articles = response.body.articles;
+        expect(articles).toHaveLength(13);
+        expect(articles).toBeSortedBy("created_at", { descending: true });
+      });
+  });
+  test("GET:200 sends an array of articles to the client which do not include the articles body column", () => {
     return request(app)
-    .get("/api/articles")
-    .expect(200)
-    .then((response) => {
-      const articles = response.body.articles;
-      console.log(articles)
-      articles.forEach((article) => {
-        expect(article).not.toHaveProperty('body');
-      })     
-    });
-  })
-})
+      .get("/api/articles")
+      .expect(200)
+      .then((response) => {
+        const articles = response.body.articles;
+        articles.forEach((article) => {
+          expect(article).not.toHaveProperty("body");
+        });
+      });
+  });
+});
+describe("GET /api/articles/:article_id/comments", () => {
+  test("GET:200 sends an array of comments for a single article to the client", () => {
+    return request(app)
+      .get("/api/articles/3/comments")
+      .expect(200)
+      .then((response) => {
+        const comments = response.body.comments;
+        expect(comments).toHaveLength(2);
+        comments.forEach((comment) => {
+          expect(comment).toMatchObject({
+            comment_id: expect.any(Number),
+            votes: expect.any(Number),
+            created_at: expect.any(String),
+            author: expect.any(String),
+            body: expect.any(String),
+            article_id: expect.any(Number),
+          });
+        });
+      });
+  });
+  test("GET:200 sends an array of comments for a single article to the client with the most recent comments first", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then((response) => {
+        const comments = response.body.comments;
+        expect(comments).toHaveLength(11);
+        expect(comments).toBeSortedBy("created_at", { descending: true });
+      });
+  });
+  test("GET:404 reponds with an appropriate error message when given a valid but non-existent id", () => {
+    return request(app)
+      .get("/api/articles/34324/comments")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("entry does not exist");
+      });
+  });
+  test("GET:400 responds with an appropriate error message when given an invalid id", () => {
+    return request(app)
+      .get("/api/articles/not-an-id/comments")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad Request");
+      });
+  });
+  test("GET:200 responds with an appropriate  message when given an article id for an article which does not have any comments", () => {
+    return request(app)
+      .get("/api/articles/2/comments")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.msg).toBe("no comments for this article");
+      });
+  });
+});

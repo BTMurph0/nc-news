@@ -12,7 +12,16 @@ exports.selectCommentsByArticleId = (article_id) => {
       [article_id]
     )
     .then((result) => {
-
       return result.rows;
+    });
+};
+exports.addComment = (article_id, { author, body} ) => {
+  return db
+    .query(
+      "INSERT INTO comments (author, body, article_id) VALUES ($1, $2, $3) RETURNING *;",
+      [author, body, article_id]
+    )
+    .then((result) => {
+      return result.rows[0];
     });
 };

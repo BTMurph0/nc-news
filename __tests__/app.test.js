@@ -175,6 +175,52 @@ describe("GET /api/articles/:article_id/comments", () => {
       .expect(200)
       .then((response) => {
         expect(response.body.msg).toBe("no comments for this article");
+        expect(response.body.comments).toEqual([]);
+      });
+  });
+});
+describe("POST /api/articles/:article_id/comments", () => {
+  test("POST:201 inserts a new comment to the db and sends the new comment back to the client", () => {
+    const newComment = {
+      author: "butter_bridge",
+      body: "a new comment",
+    };
+    return request(app)
+      .post("/api/articles/3/comments")
+      .send(newComment)
+      .expect(201)
+      .then((response) => {
+        const comment = response.body.comment;
+        expect(comment.comment_id).toBe(19);
+        expect(comment.author).toBe("butter_bridge");
+        expect(comment.body).toBe("a new comment");
+      });
+  });
+  test("POST:400 responds with an appropriate status and error message when provided with missing key", () => {
+    const newComment = {
+      body: "a new comment",
+    };
+    return request(app)
+      .post("/api/articles/3/comments")
+      .send(newComment)
+      .expect(400)
+      .then((response) => {
+        const msg = response.body.msg;
+        expect(msg).toBe("Bad Request");
+      });
+  });
+  test("POST:404 responds with an appropriate status and error message when provided a non-existing article id", () => {
+    const newComment = {
+      author: "butter_bridge",
+      body: "a new comment",
+    };
+    return request(app)
+      .post("/api/articles/3432432/comments")
+      .send(newComment)
+      .expect(404)
+      .then((response) => {
+        const msg = response.body.msg;
+        expect(msg).toBe("entry does not exist");
       });
   });
 });

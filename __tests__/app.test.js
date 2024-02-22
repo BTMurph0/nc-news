@@ -282,7 +282,7 @@ describe("POST /api/articles/:article_id/comments", () => {
       });
   });
 });
-describe.only("PATCH /api/articls/:article_id", () => {
+describe("PATCH /api/articls/:article_id", () => {
   test("PATCH:200 responds with appropriate status and sends the updated article to the client", () => {
     const input = { inc_votes: 1 };
     return request(app)

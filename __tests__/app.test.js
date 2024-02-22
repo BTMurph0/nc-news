@@ -291,19 +291,17 @@ describe("PATCH /api/articls/:article_id", () => {
       .expect(200)
       .then((response) => {
         const article = response.body.article;
-        expect(article).toEqual(
-          {
-            article_id: 1,
-            title: "Living in the shadow of a great man",
-            topic: "mitch",
-            author: "butter_bridge",
-            body: "I find this existence challenging",
-            created_at: "2020-07-09T20:11:00.000Z",
-            votes: 101,
-            article_img_url:
-              "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
-          },
-        );
+        expect(article).toEqual({
+          article_id: 1,
+          title: "Living in the shadow of a great man",
+          topic: "mitch",
+          author: "butter_bridge",
+          body: "I find this existence challenging",
+          created_at: "2020-07-09T20:11:00.000Z",
+          votes: 101,
+          article_img_url:
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+        });
       });
   });
   test("PATCH:200 responds with appropriate status and sends the updated article to the client", () => {
@@ -314,19 +312,17 @@ describe("PATCH /api/articls/:article_id", () => {
       .expect(200)
       .then((response) => {
         const article = response.body.article;
-        expect(article).toEqual(
-          {
-            article_id: 1,
-            title: "Living in the shadow of a great man",
-            topic: "mitch",
-            author: "butter_bridge",
-            body: "I find this existence challenging",
-            created_at: "2020-07-09T20:11:00.000Z",
-            votes: 90,
-            article_img_url:
-              "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
-          },
-        );
+        expect(article).toEqual({
+          article_id: 1,
+          title: "Living in the shadow of a great man",
+          topic: "mitch",
+          author: "butter_bridge",
+          body: "I find this existence challenging",
+          created_at: "2020-07-09T20:11:00.000Z",
+          votes: 90,
+          article_img_url:
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+        });
       });
   });
   test("PATCH:404 responds with an appropriate status and error message when provided a non-existing article id", () => {
@@ -352,7 +348,7 @@ describe("PATCH /api/articls/:article_id", () => {
       });
   });
   test("PATCH:400 responds with an appropriate status and error message when provided a non-valid input", () => {
-    const input = { inc_votes: 'string' };
+    const input = { inc_votes: "string" };
     return request(app)
       .patch("/api/articles/1")
       .send(input)
@@ -363,7 +359,7 @@ describe("PATCH /api/articls/:article_id", () => {
       });
   });
   test("PATCH:400 responds with an appropriate status and error message when provided a non-valid key", () => {
-    const input = { inc_vo: 'string' };
+    const input = { inc_vo: "string" };
     return request(app)
       .patch("/api/articles/1")
       .send(input)
@@ -373,4 +369,34 @@ describe("PATCH /api/articls/:article_id", () => {
         expect(msg).toBe("Bad Request");
       });
   });
+});
+describe("DELETE /api/comments/:comment_id", () => {
+  test("DELETE: 204 deletes the comment and does not return content", () => {
+    return request(app)
+      .delete("/api/comments/5")
+      .expect(204)
+      .then((response) => {
+        expect(response.body).toEqual({});
+        return db.query("SELECT * FROM comments;");
+      })
+      .then((finalResponse) => {
+        expect(finalResponse.rows.length).toBe(17);
+      });
+  });
+  test('DELETE:404 responds with error message when passed a non-existing comment id', () => {
+    return request(app)
+    .delete('/api/comments/999')
+    .expect(404)
+    .then((response) => {
+      expect(response.body.msg).toBe('999 does not exist in comments')
+    })
+  })
+  test('DELETE:400 responds with an error message when passed an invalid id', () => {
+    return request(app)
+    .delete('/api/comments/six')
+    .expect(400)
+    .then((response) => {
+      expect(response.body.msg).toBe('Bad Request')
+    })
+  })
 });

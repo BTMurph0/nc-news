@@ -431,13 +431,22 @@ describe("GET /api/articles topic query", () => {
         });
       });
   });
+  test("GET:200 sends an empty array when passed a valid topic on which there are no articles", () => {
+    return request(app)
+      .get("/api/articles?topic=paper")
+      .expect(200)
+      .then((response) => {
+        const articles = response.body.articles;
+        expect(articles).toEqual([]);
+      });
+  });
   test("GET:404 returns error message when passed an non-existing topic", () => {
     return request(app)
       .get("/api/articles?topic=dogs")
       .expect(404)
       .then((response) => {
         expect(response.body.msg).toBe(
-          "there are no articles with the topic dogs"
+          "dogs does not exist in topics"
         );
       });
   });

@@ -14,7 +14,7 @@ exports.getCommentsByArticleId = (request, response, next) => {
       if (comments[1].length === 0) {
         response
           .status(200)
-          .send({ comments: comments[1], msg: "no comments for this article" });
+          .send({ comments: comments[1]});
       }
       response.status(200).send({ comments: comments[1] });
     })
@@ -24,12 +24,18 @@ exports.getCommentsByArticleId = (request, response, next) => {
 exports.postComment = (request, response, next) => {
   const newComment = request.body;
   const { article_id } = request.params;
-  return Promise.all([
-    checkExists("articles", "article_id", article_id),
-    addComment(article_id, newComment),
-  ])
-    .then((comment) => {
-      response.status(201).send({ comment: comment[1] });
-    })
-    .catch(next);
+  if (!newComment.author || !newComment.body) {
+    response.status(400).send({ msg: 'Bad Request' });
+  } else {
+    return Promise.all([
+      checkExists("articles", "article_id", article_id),
+      checkExists("users", "username", newComment.author),
+      addComment(article_id, newComment),
+    ])
+      .then((comment) => {
+        response.status(201).send({ comment: comment[2] });
+      })
+      .catch(next);
+  }
+  
 };

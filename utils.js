@@ -6,7 +6,7 @@ exports.checkExists = (table, column, value) => {
   return db.query(queryString, [value]).then((result) => {
     
     if (result.rows.length === 0) {
-      return Promise.reject({ status: 404, msg: "entry does not exist" });
+      return Promise.reject({ status: 404, msg: `${value} does not exist in ${table}` });
     }
     return result
   });

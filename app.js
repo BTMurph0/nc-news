@@ -12,6 +12,7 @@ const {
   postComment,
   deleteComment,
 } = require("./controllers/comments-controller.js");
+const {getUsers} = require('./controllers/users-controller.js')
 app.use(express.json());
 
 app.get("/api/topics", getTopics);
@@ -28,7 +29,9 @@ app.post("/api/articles/:article_id/comments", postComment);
 
 app.patch("/api/articles/:article_id", patchVote);
 
-app.delete('/api/comments/:comment_id', deleteComment)
+app.delete("/api/comments/:comment_id", deleteComment);
+
+app.get("/api/users", getUsers);
 
 app.use((request, response, next) => {
   response.status(404).send("Sorry can't find that!");

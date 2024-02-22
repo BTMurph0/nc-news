@@ -5,6 +5,7 @@ const { getEndpoints } = require("./controllers/endpoints-controller.js");
 const {
   getArticleById,
   getArticles,
+  patchVote,
 } = require("./controllers/articles-controller.js");
 const {
   getCommentsByArticleId,
@@ -23,6 +24,8 @@ app.get("/api/articles", getArticles);
 app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
 
 app.post("/api/articles/:article_id/comments", postComment);
+
+app.patch("/api/articles/:article_id", patchVote);
 
 app.use((request, response, next) => {
   response.status(404).send("Sorry can't find that!");

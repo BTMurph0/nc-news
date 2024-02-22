@@ -383,20 +383,38 @@ describe("DELETE /api/comments/:comment_id", () => {
         expect(finalResponse.rows.length).toBe(17);
       });
   });
-  test('DELETE:404 responds with error message when passed a non-existing comment id', () => {
+  test("DELETE:404 responds with error message when passed a non-existing comment id", () => {
     return request(app)
-    .delete('/api/comments/999')
-    .expect(404)
-    .then((response) => {
-      expect(response.body.msg).toBe('999 does not exist in comments')
-    })
-  })
-  test('DELETE:400 responds with an error message when passed an invalid id', () => {
+      .delete("/api/comments/999")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("999 does not exist in comments");
+      });
+  });
+  test("DELETE:400 responds with an error message when passed an invalid id", () => {
     return request(app)
-    .delete('/api/comments/six')
-    .expect(400)
-    .then((response) => {
-      expect(response.body.msg).toBe('Bad Request')
-    })
-  })
+      .delete("/api/comments/six")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad Request");
+      });
+  });
+});
+describe("GET /api/users", () => {
+  test("GET:200 responds with an array of all users", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then((response) => {
+        const users = response.body.users;
+        expect(users).toHaveLength(4);
+        users.forEach((user) => {
+          expect(user).toMatchObject({
+            username: expect.any(String),
+            name: expect.any(String),
+            avatar_url: expect.any(String),
+          });
+        });
+      });
+  });
 });

@@ -276,7 +276,7 @@ describe("PATCH /api/articls/:article_id", () => {
       .expect(404)
       .then((response) => {
         const msg = response.body.msg;
-        expect(msg).toBe("entry does not exist");
+        expect(msg).toBe("3432432 does not exist in articles");
       });
   });
   test("GET:400 responds with an appropriate error message when given an invalid id", () => {
@@ -303,7 +303,7 @@ describe("PATCH /api/articls/:article_id", () => {
       .expect(404)
       .then((response) => {
         const msg = response.body.msg;
-        expect(msg).toBe("entry does not exist");
+        expect(msg).toBe("fdsfdsf does not exist in users");
       });
   });
 });

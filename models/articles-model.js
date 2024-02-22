@@ -36,7 +36,6 @@ exports.updateVotes = (article_id, newVote) => {
       [newVote, article_id]
     )
     .then((result) => {
-      console.log(result.rows);
       return result.rows[0];
     });
 };

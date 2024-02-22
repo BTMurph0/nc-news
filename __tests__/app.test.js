@@ -418,3 +418,27 @@ describe("GET /api/users", () => {
       });
   });
 });
+describe("GET /api/articles topic query", () => {
+  test("GET:200 sends an array of articles filtered by a topic", () => {
+    return request(app)
+      .get("/api/articles?topic=cats")
+      .expect(200)
+      .then((response) => {
+        const articles = response.body.articles;
+        expect(articles).toHaveLength(1);
+        articles.forEach((article) => {
+          expect(article.topic).toBe("cats");
+        });
+      });
+  });
+  test("GET:404 returns error message when passed an non-existing topic", () => {
+    return request(app)
+      .get("/api/articles?topic=dogs")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe(
+          "there are no articles with the topic dogs"
+        );
+      });
+  });
+});

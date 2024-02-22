@@ -14,17 +14,31 @@ exports.selectArticle = (article_id) => {
     });
 };
 
-exports.selectArticles = () => {
-  const sqlString = `
+exports.selectArticles = (topic) => {
+  let sqlString = `
   SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT(comment_id) AS comment_count
   FROM articles
   LEFT JOIN comments 
   ON comments.article_id = articles.article_id
+  `;
+  const queryVals = []
+  if (topic) {
+    sqlString += `WHERE articles.topic = $1`;
+    queryVals.push(topic)
+  }
+
+  sqlString += `
   GROUP BY articles.article_id
   ORDER BY articles.created_at DESC
   `;
 
-  return db.query(sqlString).then((result) => {
+  return db.query(sqlString, queryVals).then((result) => {
+    if(!result.rows[0]) {
+      return Promise.reject({
+        status: 404,
+        msg: `there are no articles with the topic ${topic}`
+      })
+    }
     return result.rows;
   });
 };

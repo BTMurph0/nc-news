@@ -33,12 +33,6 @@ exports.selectArticles = (topic) => {
   `;
 
   return db.query(sqlString, queryVals).then((result) => {
-    if(!result.rows[0]) {
-      return Promise.reject({
-        status: 404,
-        msg: `there are no articles with the topic ${topic}`
-      })
-    }
     return result.rows;
   });
 };

@@ -15,8 +15,18 @@ exports.getArticleById = (request, response, next) => {
 };
 
 exports.getArticles = (request, response, next) => {
-  const topic = request.query.topic
-  selectArticles(topic)
+  const topic = request.query.topic;
+  if (topic) {
+    return Promise.all([
+      checkExists("topics", "slug", topic),
+      selectArticles(topic),
+    ])
+      .then((articles) => {
+        response.status(200).send({ articles: articles[1] });
+      })
+      .catch(next);
+  }
+  selectArticles()
     .then((articles) => {
       response.status(200).send({ articles });
     })

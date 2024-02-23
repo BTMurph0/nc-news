@@ -1,37 +1,9 @@
 const express = require("express");
 const app = express();
-const { getTopics } = require("./controllers/topics-controller.js");
-const { getEndpoints } = require("./controllers/endpoints-controller.js");
-const {
-  getArticleById,
-  getArticles,
-  patchVote,
-} = require("./controllers/articles-controller.js");
-const {
-  getCommentsByArticleId,
-  postComment,
-  deleteComment,
-} = require("./controllers/comments-controller.js");
-const {getUsers} = require('./controllers/users-controller.js')
-app.use(express.json());
 
-app.get("/api/topics", getTopics);
+const apiRouter = require("./routes/api-router");
+app.use("/api", apiRouter);
 
-app.get("/api", getEndpoints);
-
-app.get("/api/articles/:article_id", getArticleById);
-
-app.get("/api/articles", getArticles);
-
-app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
-
-app.post("/api/articles/:article_id/comments", postComment);
-
-app.patch("/api/articles/:article_id", patchVote);
-
-app.delete("/api/comments/:comment_id", deleteComment);
-
-app.get("/api/users", getUsers);
 
 app.use((request, response, next) => {
   response.status(404).send("Sorry can't find that!");

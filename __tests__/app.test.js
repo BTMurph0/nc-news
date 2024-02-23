@@ -506,3 +506,26 @@ describe("GET /api/articles (sorting)", () => {
       });
   });
 });
+describe('GET /api/users/:username', () => {
+  test('GET:200 returns a single user to the client', () => {
+    return request(app)
+    .get('/api/users/icellusedkars')
+    .expect(200)
+    .then((response) => {
+      const user = response.body.user;
+      expect(user.username).toBe('icellusedkars');
+      expect(user.name).toBe('sam');
+      expect(user.avatar_url).toBe(
+        "https://avatars2.githubusercontent.com/u/24604688?s=460&v=4"
+      );
+    })
+  })
+  test("GET:404 sends an appropriate status and error message when given a valid but non-existent username", () => {
+    return request(app)
+      .get("/api/users/bruce")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("bruce does not exist in users");
+      });
+  });
+})

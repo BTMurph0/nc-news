@@ -16,17 +16,20 @@ exports.getArticleById = (request, response, next) => {
 
 exports.getArticles = (request, response, next) => {
   const topic = request.query.topic;
+  const sortBy = request.query.sort_by;
+  const order = request.query.order
+
   if (topic) {
     return Promise.all([
       checkExists("topics", "slug", topic),
-      selectArticles(topic),
+      selectArticles(topic, sortBy, order),
     ])
       .then((articles) => {
         response.status(200).send({ articles: articles[1] });
       })
       .catch(next);
   }
-  selectArticles()
+  selectArticles(topic, sortBy, order)
     .then((articles) => {
       response.status(200).send({ articles });
     })

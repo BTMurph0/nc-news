@@ -451,3 +451,31 @@ describe("GET /api/articles topic query", () => {
       });
   });
 });
+describe(('GET /api/articles/:article_id (comment_count)'), () => {
+  test('GET:200 returns the article with the passed id and the comment_count for that article', () => {
+    return request(app)
+    .get('/api/articles/9')
+    .expect(200)
+    .then((response) => {
+      const article = response.body.article
+      expect(article.comment_count).toBe(String(2))
+      expect(article.article_id).toBe(9)
+      expect(article.title).toBe("They're not exactly dogs, are they?")
+      expect(article.topic).toBe("mitch")
+      expect(article.author).toBe("butter_bridge")
+      expect(article.body).toBe("Well? Think about it.")
+      expect(article.created_at).toBe('2020-06-06T09:10:00.000Z')
+      expect(article.article_img_url).toBe("https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700")
+    })
+  })
+  test('GET:200 returns the article with the passed id and a comment_count of 0 if the article has no comments', () => {
+    return request(app)
+    .get('/api/articles/4')
+    .expect(200)
+    .then((response) => {
+      const article = response.body.article
+      expect(article.comment_count).toBe(String(0))
+      expect(article.article_id).toBe(4)
+    })
+  })
+})

@@ -32,9 +32,11 @@ Creating the .env files:
 
 1. Using .env-example as a template, in the root folder create a file called .env.test then another called .env.development.
 
-2. Edit the files so they contain the database names - the database names can be found in the /db/setup.sql file.
+2. Make sure the files begin with PGDATABASE=
 
-3. Make sure the env files are ignored by adding their filenames to the .gitignore file.
+3. Edit the files so they contain the database names - the database names can be found in the /db/setup.sql file.
+
+4. Make sure the env files are ignored by adding their filenames to the .gitignore file.
 
 # Versions
 Requires min Node version of 10.2.4 and Posgres 15.5

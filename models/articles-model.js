@@ -41,10 +41,10 @@ exports.selectArticles = (topic, sortBy = "created_at", order = "desc") => {
     sqlString += `WHERE articles.topic = $1`;
     queryVals.push(topic);
   }
-
+console.log(sortBy)
   sqlString += `
   GROUP BY articles.article_id
-  ORDER BY articles.${sortBy} ${order}
+  ORDER BY ${sortBy} ${order}
   `;
 
   return db.query(sqlString, queryVals).then((result) => {

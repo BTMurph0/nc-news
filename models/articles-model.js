@@ -22,7 +22,7 @@ exports.selectArticle = (article_id) => {
 };
 
 exports.selectArticles = (topic, sortBy = "created_at", order = "desc") => {
-  const validSortBys = ["title", "topic", "author", "created_at", "votes"];
+  const validSortBys = ["title", "topic", "author", "created_at", "votes", "comment_count"];
 
   const validOrders = ['asc', 'desc']
 
